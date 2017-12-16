@@ -1,6 +1,8 @@
 import pygame
 import random
 import math
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
 class Box(object):
 
@@ -55,30 +57,42 @@ class System(object):
             particle = Particle(pos, vel)
             self.particles.append(particle)
 
-    def check_collision(self, i, j):
-        p1, p2 = self.particles[i], self.particles[j]
+    def check_collision(self, p1, p2):
         x1, y1 = p1.pos[0], p1.pos[1]
         x2, y2 = p2.pos[0], p2.pos[1]
         dx, dy = x2 - x1, y2 - y1
         d = math.sqrt(dx**2 + dy**2)
         if d < p1.radius + p2.radius:
             return True
-        return False
 
-    def collide(self, i, j):
-        p1, p2 = self.particles[i], self.particles[j]
+    def collide(self, p1, p2):
         x1, y1 = p1.pos[0], p1.pos[1]
         x2, y2 = p2.pos[0], p2.pos[1]
         dr = dx, dy = x2 - x1, y2 - y1
         d = math.sqrt(dx**2 + dy**2)
-        v1 = vx1, vy1 = p1.vel[0], p1.vel[1]
-        v2 = vx2, vy2 = p2.vel[0], p2.vel[1]
-        versor = dx / d, dy / d
-        vt1 = vx1 * versor[0] + vy1 * versor[1]
+        r = rx, ry = dx / d, dy / d
+        v1 = v1x, v1y = p1.vel[0], p1.vel[1]
+        v2 = v2x, v2y = p2.vel[0], p2.vel[1]
+        v1r = (v1x * rx + v1y * ry) * rx, (v1x * rx + v1y * ry) * ry
+        v1t = v1x - v1r[0], v1y - v1r[1]
+        v2r = (v2x * rx + v2y * ry) * rx, (v2x * rx + v2y * ry) * ry
+        v2t = v2x - v2r[0], v2y - v2r[1]
+        v1x += v2t[0] - v1t[0]
+        v1y += v2t[1] - v1t[1]
+        v2x += v1t[0] - v2t[0]
+        v2y += v1t[1] - v2t[1]
+        p1.vel = [v1x, v1y]
+        p2.vel = [v2x, v2y]
 
     def update(self, dt, box=None):
         for particle in self.particles:
             particle.update((0,0), dt, box)
+        for i in range(len(self.particles)):
+            for j in range(i + 1, len(self.particles)):
+                p1 = self.particles[i]
+                p2 = self.particles[j]
+                if self.check_collision(p1, p2):
+                    self.collide(p1, p2)
 
     def render(self, screen):
         for particle in self.particles:
@@ -92,7 +106,7 @@ screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
 
 box = Box(width, height)
-system = System(10, box, 0.1)
+system = System(100, box, 0.1)
 
 running = True
 while running:
