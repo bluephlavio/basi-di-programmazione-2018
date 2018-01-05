@@ -1,12 +1,15 @@
 import sys, pygame
 
-screen_size = width, height = (640, 480)
+size = (640, 480)
 bg = (0, 0, 0)
 color = (100, 100, 100)
-pos = (width//2, height//2)
 r = 10
+pos = [size[0]//2, size[1]//2]
+if len(sys.argv) == 3:
+    pos[0] = int(sys.argv[1])
+    pos[1] = int(sys.argv[2])
 
-screen = pygame.display.set_mode(screen_size)
+screen = pygame.display.set_mode(size)
 
 running = True
 
