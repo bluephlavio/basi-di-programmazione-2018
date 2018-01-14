@@ -107,7 +107,7 @@ def collide(particles):
             group = groups[-1]
         
         for p2 in particles[i+1:]:
-            if np.linalg.norm(p1.s - p2.s) < max(p1.radius, p2.radius):
+            if np.linalg.norm(p1.s - p2.s) < .8*max(p1.radius, p2.radius):
                 group.add(p2)
 
     return groups
@@ -125,12 +125,12 @@ def merge(group):
     return Particle(s, v, m, density=density)
 
 
-G = 10000
+G = 1
 n = int(input('Inserisci il numero di particelle: '))
-size = width, height = (1000, 600)
-sigma = 100
-m = 100
-density = 1
+size = width, height = (1365, 767)
+sigma = 30
+m = 1000000
+density = 10000
 bg = (0, 0, 0)
 
 system = System(G, n, width, height, sigma, m, density=density, bg=bg)
@@ -140,9 +140,9 @@ screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 system.draw(screen)
 pygame.display.flip()
 
-drag_speed = 10
+drag_speed = 3
 
-dt = 0.01
+dt = 0.001
 running = True
 pause = False
 
