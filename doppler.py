@@ -2,14 +2,6 @@ import sys, pygame
 import numpy as np
 from numpy.linalg import norm
 
-bg = (0, 0, 0)
-size = width, height = (640, 480)
-center = center_x, center_y = (width//2, height//2)
-G = 10
-d = 100
-
-screen = pygame.display.set_mode(size)
-clock = pygame.time.Clock()
 
 class Particle:
 
@@ -20,12 +12,12 @@ class Particle:
         self.r = int(m)
         self.color = color
 
-    def move(self, force, dt=1):
+    def update(self, force, dt=1):
         a = np.array(force, dtype=float) / self.m
         self.v += a*dt
         self.s += self.v*dt
 
-    def draw(self, observer=(0, 0)):
+    def draw(self, screen, observer=(0, 0)):
         position = self.coordinates()
         color = self.redshift(observer)
         radius = self.r
@@ -49,9 +41,30 @@ class Particle:
         return (r, g, b)
 
 
+class Observer:
+
+    def __init__(self, position, color, radius):
+        self.position = position
+        self.color = color
+        self.radius = radius
+
+    def draw(self, screen):
+        pygame.draw.circle(screen, self.color, self.position, self.radius)
+
+
+bg = (0, 0, 0)
+size = width, height = (640, 480)
+center = center_x, center_y = (width//2, height//2)
+G = 10
+d = 100
+
 p1 = Particle([size[0]/2-d/2, size[1]/2], [0, .4], 20, color=(255, 100, 255))
 p2 = Particle([size[0]/2+d/2, size[1]/2], [0, -.8], 10, color=(255, 100, 255))
-    
+
+o = Observer((300, 10), (255, 255, 255), 10)
+
+screen = pygame.display.set_mode(size)
+clock = pygame.time.Clock()
 
 running = True
 
@@ -66,11 +79,12 @@ while running:
     f1 = G*(p1.m*p2.m/norm(p2.s - p1.s)**3)*(p2.s - p1.s)
     f2 = -f1
     
-    p1.move(f1)
-    p2.move(f2)
+    p1.update(f1)
+    p2.update(f2)
 
     screen.fill(bg)
-    p1.draw()
-    p2.draw()
+    p1.draw(screen, observer=o.position)
+    p2.draw(screen, observer=o.position)
+    o.draw(screen)
     pygame.display.flip()
 
