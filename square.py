@@ -1,10 +1,12 @@
-ok = False
-while not ok:
+# Calcola il quadrato di un numero intero
+
+while True:
     try:
-        x = int(input('Inserisci un numero: '))
-        ok = True
+        n = int(input('Inserisci un numero intero: '))
+        break
     except ValueError:
-        print('Errore: non sono riuscito ad interpretare il valore inserito come un numero.')
+        print('ERRORE: non sono riuscito ad interpretare il valore inserito come un numero intero.')
         continue
 
-print('Il quadrato di {} è {}.'.format(x, x**2))
+print(f'Il quadrato di {n} è {n**2}.')
+input('Premi un tasto per uscire...')
