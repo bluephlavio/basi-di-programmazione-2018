@@ -135,7 +135,7 @@ bg = (0, 0, 0)
 
 system = System(G, n, width, height, sigma, m, density=density, bg=bg)
 clock = pygame.time.Clock()
-screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
+screen = pygame.display.set_mode(size)
 
 system.draw(screen)
 pygame.display.flip()

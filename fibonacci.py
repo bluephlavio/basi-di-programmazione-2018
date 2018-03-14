@@ -1,41 +1,37 @@
 # Genera i primi n numeri di Fibonacci
 
-import sys
+# Richiedi quanti numeri l'utente vuole...
+n = int(input('Quanti numeri di Fibonacci vuoi? '))
 
-f1 = int(sys.argv[1])
-f2 = int(sys.argv[2])
-N = int(sys.argv[3])
+# Inizializza una lista dei numeri di Fibonacci
+fib = [1, 1]
 
-def fib1(a, b, n):
-    print(1, a)
-    print(2, b)
-    for i in range(2, n):
-        c = a + b
-        print(i + 1, c)
-        a = b
-        b = c
+# Calcola i successivi numeri di Fibonacci
+for i in range(2, n):
+	fib += [fib[i-1] + fib[i-2]]
 
+# Stampa i numeri calcolati
+print('i\tfib(i)') # Intestazione
+for i in range(n):
+	print(f'{i+1}\t{fib[i]}')
 
-def fib2(a, b, n):
-    fib = [a, b]
-    for i in range(2, n):
-        fib.append(fib[i-2] + fib[i-1])
-    return fib
+print('Sto preparando il grafico, attendi...')
 
+# Grafico della successione
 
-fib = fib2(f1, f2, N)
-for i, f in enumerate(fib):
-    print(i + 1, f)
-
+# Importiamo il modulo matplotlib necessario alla creazione di grafici.
 import matplotlib.pyplot as plt
 
+# Impostiamo titolo, assi, etc..
 plt.figure('Fibonacci')
-plt.title('$f_n=f_{n-2}+f_{n-1}$, $f_1=%d$, $f_2=%d$' % (f1, f2))
+plt.title('$f_n=f_{n-2}+f_{n-1}$, $f_1=%d$, $f_2=%d$' % (1, 1))
 plt.xlabel('$n$')
 plt.ylabel('$f_n$')
 plt.grid(True)
 
-plt.plot(range(1, N+1), fib, 'bo')
+# Creazione (plot) del grafico
+plt.plot(range(1, n+1), fib, 'bo')
 
+# Mostra a schermo il grafico
 plt.show()
 
