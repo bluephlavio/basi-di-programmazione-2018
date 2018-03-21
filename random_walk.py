@@ -1,54 +1,80 @@
-import sys, random, pygame
+import pygame
+import random
+import math
 
-pygame.init()
+# DIMENSIONI
+larghezza = 640
+altezza = 480
+dimensioni = (larghezza, altezza)
+raggio_cerchio = 30
+diametro_cerchio = raggio_cerchio * 2
 
-size = width, height = (640, 480)
-scale = ((width/2)**2 + (height/2)**2)**.5
-r0 = 10
+# COLORI e IMMAGINI
+colore_sfondo = (255, 255, 255)
+colore_cerchio = (0, 0, 0) # Sostituito da immagine
+# Carica l'icona da file esterno
+icona = pygame.image.load('img\icon.jpg')
+# Carica l'immagine del cerchio da file esterno
+immagine = pygame.image.load('img\star.png')
+# Ridimensiona l'immagine
+immagine = pygame.transform.smoothscale(immagine, (diametro_cerchio, diametro_cerchio))
 
-directions = ['LEFT', 'RIGHT', 'UP', 'DOWN']
+# Calcola il colore in base alle coordinate del cerchio
+def colore(x, y):
+    x_centro = larghezza//2
+    y_centro = altezza//2
+    R = math.sqrt(x_centro**2 + y_centro**2)
+    delta_x = x - x_centro
+    delta_y = y - y_centro
+    r = math.sqrt(delta_x**2 + delta_y**2)
+    rosso = 200
+    verde = 150
+    blu = min(100, int(100 * r / R))
+    return (rosso, verde, blu)
 
-speed = int(input('Inserisci la velocità del random walk: '))
+# DIREZIONI
+direzioni = ['SINISTRA', 'DESTRA', 'ALTO', 'BASSO']
 
-def distance_from_center(x, y):
-    return ((x-width/2)**2 + (y-height/2)**2)**.5
+# VELOCITA'
+velocità = int(input('Inserisci la velocità del random walk: '))
 
-def get_bg_by_position(x, y):
-    r = int(distance_from_center(x, y) / scale * 255)
-    return (min(r, 255), 80, 50)
+# Crea la finestra
+schermo = pygame.display.set_mode(dimensioni)
+# Imposta il titolo della finestra
+pygame.display.set_caption('Random Walk')
+# Imposta l'icona della finestra
+pygame.display.set_icon(icona)
 
-def get_color_by_position(x, y):
-    r = int(distance_from_center(x, y) / scale * 255)
-    return (50, 20, min(r, 255))
+# Inizializza le coordinate del cerchio nel centro della finestra
+x = larghezza//2
+y = altezza//2
 
-def get_radius_by_position(x, y):
-    return r0 + int(distance_from_center(x, y) / scale * r0)
+running = True
 
-screen = pygame.display.set_mode(size)
-x, y = map(lambda x: int(x/2), size)
+# MAIN LOOP
+while running:
 
-while True:
-    
+    # Processa gli eventi di input e gestisce le azioni da eseguire
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
-            sys.exit()
+            running = False
 
-    direction = random.choices(directions)[0]
-    if direction == 'LEFT':
-        x -= speed
-    elif direction == 'RIGHT':
-        x += speed
-    elif direction == 'UP':
-        y -= speed
-    elif direction == 'DOWN':
-        y += speed
+    # Scegli una direzione dalla lista direzioni
+    direzione = random.choices(direzioni)[0]
+    if direzione == 'SINISTRA':
+        x -= velocità
+    elif direzione == 'DESTRA':
+        x += velocità
+    elif direzione == 'ALTO':
+        y -= velocità
+    elif direzione == 'BASSO':
+        y += velocità
 
-    bg = get_bg_by_position(x, y)
-    color = get_color_by_position(x, y)
-    radius = get_radius_by_position(x,y)
+    posizione = (x - raggio_cerchio, y - raggio_cerchio) # posizione dell'immagine (vertice in alto a sinistra)
+    colore_sfondo = colore(posizione[0], posizione[1]) # calcola il colore dello sfondo
 
-    screen.fill(bg)
-    pygame.draw.circle(screen, color, (x, y), radius)
-    pygame.display.flip()
+    schermo.fill(colore_sfondo) # pulisce lo schermo
+    schermo.blit(immagine, posizione) # stampa l'immagine
+    pygame.display.flip() # manda il risultato in output
 
     
