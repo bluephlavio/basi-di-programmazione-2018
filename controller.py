@@ -1,52 +1,63 @@
-import sys, pygame
+import pygame
 
-pygame.init()
+# COLORI
+colore_sfondo = (0, 0, 0)
+colore_cerchio = (100, 100, 100)
 
-bg = (0, 0, 0)
-color = (100, 100, 100)
-radius = 10
-size = (640, 480)
-pos = [size[0]//2, size[1]//2]
-speed = 5
+# DIMENSIONI
+larghezza = 640
+altezza = 480
+dimensioni = (larghezza, altezza)
+raggio_cerchio = 10
 
-screen = pygame.display.set_mode(size)
-clock = pygame.time.Clock()
+# POSIZIONI E VELOCITA'
+vel = 5
+pos = [larghezza//2, altezza//2]
 
+# SCHERMO
+schermo = pygame.display.set_mode(dimensioni)
+
+# TEMPO
+tempo = pygame.time.Clock()
+
+# INPUT
 def process_input_1(e):
     if e.type == pygame.KEYDOWN:
         if e.key == pygame.K_LEFT:
-            pos[0] -= speed
+            pos[0] -= vel
         if e.key == pygame.K_RIGHT:
-            pos[0] += speed
+            pos[0] += vel
         if e.key == pygame.K_DOWN:
-            pos[1] += speed
+            pos[1] += vel
         if e.key == pygame.K_UP:
-            pos[1] -= speed
+            pos[1] -= vel
 
 def process_input_2():
     pressed = pygame.key.get_pressed()
     if pressed[pygame.K_LEFT]:
-        pos[0] -= speed
+        pos[0] -= vel
     if pressed[pygame.K_RIGHT]:
-        pos[0] += speed
+        pos[0] += vel
     if pressed[pygame.K_DOWN]:
-        pos[1] += speed
+        pos[1] += vel
     if pressed[pygame.K_UP]:
-        pos[1] -= speed
+        pos[1] -= vel
 
 
-while True:
+# MAIN LOOP
+running = True
+while running:
 
-    clock.tick(50)
+    tempo.tick(50)
 
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
-            sys.exit()
+            running = False
 
     process_input_2()
 
-    screen.fill(bg)
-    pygame.draw.circle(screen, color, pos, radius)
+    schermo.fill(colore_sfondo)
+    pygame.draw.circle(schermo, colore_cerchio, pos, raggio_cerchio)
     pygame.display.flip()
 
 
