@@ -1,11 +1,9 @@
 import pygame
 import random
-
-# FISICA
-n = 100
-sigma_v = 25
-g = 10
-dt = 0.1
+import csv
+import matplotlib.pyplot as plt
+import numpy as np
+import time
 
 # DIMENSIONI
 dimensioni = (640, 480)
@@ -13,11 +11,73 @@ raggio_particella = 10
 diametro_particella = 2 * raggio_particella
 dimensioni_particella = (diametro_particella,) * 2
 
+# FISICA
+n = 10
+sigma_v = 2
+g = 0
+
+# ANALISI DATI
+analisi = False
+frequenza = 1
+bins = 25
+x_range=(0, dimensioni[0])
+y_range=(0, dimensioni[1])
+vx_range=(-10 * sigma_v, 10 * sigma_v)
+vy_range=(-10 * sigma_v, 10 * sigma_v)
+v2_range=(0, 3 * sigma_v**2)
+
+if analisi:
+    fig = plt.figure()
+    fig.canvas.set_window_title('Statistiche')
+    ax_1 = plt.subplot(321)
+    ax_2 = plt.subplot(322)
+    ax_3 = plt.subplot(323)
+    ax_4 = plt.subplot(324)
+    ax_5 = plt.subplot(313)
+    plt.ion()
+    plt.show()
+
+
 # FUNZIONI
 def carica_immagine(nome_file, dimensioni):
     img = pygame.image.load(f'img\{nome_file}')
     img = pygame.transform.smoothscale(img, dimensioni)
     return img
+
+def plot(universo):
+    x = [p.s[0] for p in universo.particelle]
+    y = [p.s[1] for p in universo.particelle]
+    vx = [p.v[0] for p in universo.particelle]
+    vy = [p.v[1] for p in universo.particelle]
+    v2 = [p.v[0]**2+p.v[1]**2 for p in universo.particelle]
+
+    ax_1.clear()
+    ax_1.hist(x, bins=bins, range=x_range)
+    ax_1.set_xlabel('$x$')
+    ax_1.set_ylabel('$n$')
+    
+    ax_2.clear()
+    ax_2.hist(y, bins=bins, range=y_range)
+    ax_2.set_xlabel('$y$')
+    ax_2.set_ylabel('$n$')
+    
+    ax_3.clear()
+    ax_3.hist(vx, bins=bins, range=vx_range)
+    ax_3.set_xlabel('$v_x$')
+    ax_3.set_ylabel('$n$')
+    
+    ax_4.clear()
+    ax_4.hist(vy, bins=bins, range=vy_range)
+    ax_4.set_xlabel('$v_y$')
+    ax_4.set_ylabel('$n$')
+    
+    ax_5.clear()
+    ax_5.hist(v2, bins=bins, range=v2_range)
+    ax_5.set_xlabel('$v^2$')
+    ax_5.set_ylabel('$n$')
+    
+    plt.tight_layout()
+    fig.canvas.flush_events()
 
 # IMMAGINI
 icona = carica_immagine('icon.jpg', (32, 32))
@@ -57,8 +117,8 @@ class Particella:
             self.v[1] += g * dt
 
     def disegna(self, schermo):
-        x = self.s[0] - raggio_particella
-        y = self.s[1] - raggio_particella
+        x = int(self.s[0]) - raggio_particella
+        y = int(self.s[1]) - raggio_particella
         schermo.blit(particella, (x, y))
 
 
@@ -85,6 +145,7 @@ class Universo:
         for p in self.particelle:
             p.disegna(schermo)
 
+
 # SCHERMO
 pygame.display.set_mode(dimensioni, pygame.RESIZABLE)
 pygame.display.set_caption('Gas')
@@ -93,6 +154,8 @@ schermo = pygame.display.get_surface()
 
 # TEMPO
 tempo = pygame.time.Clock()
+t = time.time()
+t0 = t
 
 # OGGETTI
 universo = Universo(n, sigma_v, dimensioni=dimensioni)
@@ -110,7 +173,13 @@ while running:
             pygame.display.set_mode(dimensioni, pygame.RESIZABLE)
             schermo = pygame.display.get_surface()
 
-    universo.evolvi(dt=dt)
+    t = time.time()
+    dt = t - t0
+    if analisi and dt > (1 / frequenza):
+        plot(universo)
+        t0 = t
+
+    universo.evolvi()
 
     schermo.blit(sfondo, (0,0))
     universo.disegna(schermo)
