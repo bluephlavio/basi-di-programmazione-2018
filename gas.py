@@ -17,8 +17,8 @@ sigma_v = 2
 g = 0
 
 # ANALISI DATI
-analisi = False
-frequenza = 1
+analisi = True
+frequenza = 10
 bins = 25
 x_range=(0, dimensioni[0])
 y_range=(0, dimensioni[1])
@@ -27,8 +27,7 @@ vy_range=(-10 * sigma_v, 10 * sigma_v)
 v2_range=(0, 3 * sigma_v**2)
 
 if analisi:
-    fig = plt.figure()
-    fig.canvas.set_window_title('Statistiche')
+    fig = plt.figure('stats')
     ax_1 = plt.subplot(321)
     ax_2 = plt.subplot(322)
     ax_3 = plt.subplot(323)
