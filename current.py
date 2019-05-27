@@ -14,7 +14,7 @@ screen = pygame.display.get_surface()
 # FISICA
 n = 100
 sigma = 0.5
-drift = [0, 0]
+drift = [0.5e-4, 0]
 
 def drift_gen(sigma, drift):
     normal_gen = normal_2d_gen(mu=0, sigma=sigma)
